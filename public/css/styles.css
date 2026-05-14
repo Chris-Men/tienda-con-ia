@@ -1,0 +1,76 @@
+body{
+background: #DE6262;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to top, #FFB88C, #DE6262);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to top, #FFB88C, #DE6262); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+/* styles.css */
+}
+
+/* Estilos para el encabezado */
+.header {
+    background-color: #6c4939; /* Color marrón o café */
+    color: #fff; /* Texto en blanco */
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutíl */
+}
+
+.header a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+    margin: 0 10px;
+    transition: color 0.3s; /* Transición de color suave */
+}
+
+.header a:hover {
+    color: #ffd700; /* Cambia el color al pasar el ratón (amarillo) */
+}
+
+
+/* Estilos para las tarjetas */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card img {
+    max-width: 100%;
+}
+
+.card h5 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.btn-buy {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.btn-price {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+}
+
+.item.estilo .name,
+.item.estilo .des {
+    color: #000000; /* Cambia #ff0000 al color que desees */
+}

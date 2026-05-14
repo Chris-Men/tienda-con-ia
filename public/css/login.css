@@ -1,0 +1,68 @@
+body{
+background: #DE6262;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to top, #FFB88C, #DE6262);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to top, #FFB88C, #DE6262); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+
+/* Estilos para el formulario de inicio de sesión */
+.card {
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 650px; /* Ancho máximo del formulario */
+    margin: 0 auto; /* Centrar horizontalmente */
+}
+
+.card-header {
+    background-color: #6c4939; /* Color de cabecera */
+    color: #fff; /* Texto en cabecera en blanco */
+    font-size: 24px; /* Tamaño de fuente más grande */
+    padding: 15px;
+    text-align: center; /* Centrar texto en la cabecera */
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 35px;
+}
+
+label {
+    font-weight: bold;
+}
+
+.form-control {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.invalid-feedback {
+    color: #ff0000; /* Color de retroalimentación en rojo */
+}
+
+.form-check-label {
+    font-weight: normal; /* Peso de fuente normal para las etiquetas de verificación */
+}
+
+.btn-primary {
+    background-color: #6c4939; /* Color de botón principal */
+    color: #fff; /* Texto en botón principal en blanco */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    display: block; /* Hacer que el botón sea de ancho completo */
+    margin: 0 auto; /* Centrar horizontalmente */
+}
+
+.btn-link {
+    color: #6c4939; /* Color de enlace de contraseña olvidada */
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    text-decoration: underline; /* Subrayar enlace al pasar el ratón */
+}

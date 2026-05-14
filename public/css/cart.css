@@ -1,0 +1,83 @@
+body{
+    background: #DE6262;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #FFB88C, #DE6262);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, #FFB88C, #DE6262); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
+    }
+    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    
+
+    .container {
+        margin-top: 20px;
+    }
+
+    .welcome-message {
+        background-color:#6c4939;
+        color: #ffffff;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .welcome-message h1 {
+        margin-bottom: 10px;
+    }
+
+    .card {
+        border: 1px solid #d81111;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .card-body {
+        text-align: center;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .card-text {
+        margin-bottom: 10px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="number"] {
+        width: 50px;
+        margin-bottom: 10px;
+    }
+
+    button {
+        background-color: #5b28a7;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .badge {
+        margin-left: 5px;
+    }
+
+    
+

@@ -1,0 +1,48 @@
+body{
+    background: #DE6262;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #FFB88C, #DE6262);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, #FFB88C, #DE6262); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
+    }
+
+    /* Estilo de la barra lateral */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 150px; /* Ancho de la barra lateral */
+    height: 100vh;
+   
+    padding: 20px;
+}
+
+/* Estilo de la barra lateral */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background: #ff6e7f; /* Fondo con degradado */
+    background: -webkit-linear-gradient(to top, #bfe9ff, #ff6e7f); /* Degradado para navegadores WebKit */
+    background: linear-gradient(to top, #bfe9ff, #ff6e7f); /* Degradado para navegadores modernos */
+    padding: 20px;
+}
+
+/* Resto de los estilos (tamaño de fuente, color de texto, etc.) como en la respuesta anterior */
+
+
+/* Estilo de los enlaces de la barra lateral */
+.nav-item {
+    margin-bottom: 15px;
+}
+
+.nav-link {
+    font-size: 18px; /* Tamaño de fuente más grande */
+    color: #fff; /* Color de texto blanco */
+}
+
+/* Estilo del contenido principal */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
