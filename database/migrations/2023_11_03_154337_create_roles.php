@@ -14,16 +14,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $role1 = Role::create(['name' => 'admin']);
-        $role2 = Role::create(['name' => 'cliente']);
+        // $role1 = Role::create(['name' => 'admin']);
+        // $role2 = Role::create(['name' => 'cliente']);
 
-        // Obtener los primeros cuatro usuarios registrados
-        $users = User::limit(4)->get();
+        // // Obtener los primeros cuatro usuarios registrados
+        // $users = User::limit(4)->get();
 
-        // Asignar el rol de 'admin' a los usuarios
-        foreach ($users as $user) {
-            $user->assignRole($role1);
-        }
+        // // Asignar el rol de 'admin' a los usuarios
+        // foreach ($users as $user) {
+        //     $user->assignRole($role1);
+        // }
     }
 
     /**

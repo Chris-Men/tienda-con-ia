@@ -75,6 +75,9 @@ class RegisterController extends Controller
             'address' => $data['address'],
         ]);
 
+        // Asignar el rol automáticamente usando Spatie
+        $user->assignRole('cliente');
+
         // Crear un cliente asociado al usuario
         Cliente::create([
             'name' => $data['name'],

@@ -53,3 +53,41 @@ Route::get('processPaypal', [PaypalController::class, 'processPaypal'])->name('p
 Route::get('processSuccess', [PaypalController::class, 'processSuccess'])->name('processSuccess');
 Route::get('processCancel', [PaypalController::class, 'processCancel'])->name('processCancel');
 
+// === NUEVA RUTA PARA LA GENERACIÓN DE IA ===
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
+Route::post('/generate-image', function (Request $request) {
+
+    $prompt = $request->prompt;
+
+    $response = Http::withHeaders([
+        'Authorization' => 'Bearer ' . env('HF_TOKEN'),
+    ])
+        ->timeout(180)
+        ->post(
+            'https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5',
+            [
+                'inputs' => $prompt,
+                'options' => [
+                    'wait_for_model' => true
+                ]
+            ]
+        );
+
+    // Detectar si vino JSON de error
+    $contentType = $response->header('Content-Type');
+
+    if (str_contains($contentType, 'application/json')) {
+
+        return response()->json([
+            'huggingface_response' => $response->json()
+        ], 500);
+    }
+
+    return response()->json([
+        'headers' => $response->headers(),
+        'body' => $response->body(),
+        'status' => $response->status()
+    ]);
+});
