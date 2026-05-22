@@ -12,16 +12,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // 1. PRIMERO LOS ROLES (Obligatorio para que existan en el sistema)
+        $this->call(RolesAndPermissionsSeeder::class);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // 2. LUEGO LOS COMPONENTES DE LA TIENDA
         $this->call(CategoriasSeeder::class);
         $this->call(ProductosSeeder::class);
+
+        // 3. DESPUÉS LOS USUARIOS (Ya que dependen de los roles creados en el paso 1)
         $this->call(UsuariosSeeder::class);
         $this->call(ClientesSeeder::class);
-        $this->call(RolesAndPermissionsSeeder::class);
     }
 }

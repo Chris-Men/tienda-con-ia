@@ -187,6 +187,32 @@
             font-size: 16px;
             margin-bottom: 25px;
         }
+
+        /* 1. Definir el tamaño y ancho de la barra */
+        .checkout-scroll-area::-webkit-scrollbar {
+            width: 8px;
+            /* Barra delgada */
+        }
+
+        /* 2. El fondo de la barra por donde corre el scroll (Track) */
+        .checkout-scroll-area::-webkit-scrollbar-track {
+            background: #1e293b;
+            /* Azul grisáceo oscuro acorde a tu fondo */
+            border-radius: 10px;
+        }
+
+        /* 3. El indicador que se mueve (Thumb) */
+        .checkout-scroll-area::-webkit-scrollbar-thumb {
+            background: #4f46e5;
+            /* El mismo color morado de tus botones primarios */
+            border-radius: 10px;
+        }
+
+        /* 4. Color cuando el usuario pasa el mouse encima */
+        .checkout-scroll-area::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+            /* Un morado un poco más brillante */
+        }
     </style>
 
     <div class="checkout-container">
@@ -211,59 +237,119 @@
         var carritoContainer = document.getElementById('carrito-container');
 
         function eliminarProducto(index) {
+            var producto = carrito[index];
+
+            if (producto.cantidad === 1) {
+                Swal.fire({
+                    title: '¿Retirar producto?',
+                    text: 'Esta acción removerá la prenda seleccionada de tu resumen.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4f46e5',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Sí, remover',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        carrito.splice(index, 1);
+                        actualizarCarritoYRender();
+                    }
+                });
+                return;
+            }
+
             Swal.fire({
-                title: '¿Retirar producto?',
-                text: 'Esta acción removerá la prenda seleccionada de tu resumen.',
-                icon: 'warning',
+                title: 'Modificar cantidad',
+                html: `
+                <p>¿Cuántas unidades deseas retirar de este diseño?</p>
+                <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top:15px;">
+                    <label style="font-weight:bold;">Cantidad a quitar:</label>
+                    <input type="number" id="cantidad_restar" class="swal2-input" value="1" min="1" max="${producto.cantidad}"
+                        style="width:80px; text-align:center; margin:0; font-weight:bold;">
+                </div>
+                <p style="font-size:12px; color:#94a3b8; margin-top:10px;">(Unidades actuales en la orden: ${producto.cantidad})</p>
+            `,
+                icon: 'question',
                 showCancelButton: true,
+                showDenyButton: true,
                 confirmButtonColor: '#4f46e5',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'Sí, remover',
-                cancelButtonText: 'Cancelar'
+                denyButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Restar Unidades',
+                denyButtonText: 'Quitar Todo el Bloque',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    const cantidadARestar = parseInt(document.getElementById('cantidad_restar').value);
+                    if (isNaN(cantidadARestar) || cantidadARestar < 1 || cantidadARestar > producto.cantidad) {
+                        Swal.showValidationMessage(
+                        `Por favor ingresa un número entre 1 y ${producto.cantidad}`);
+                    }
+                    return cantidadARestar;
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    carrito.splice(index, 1);
-                    localStorage.setItem('carrito', JSON.stringify(carrito));
-                    mostrarProductosDelCarrito();
+                    var cantidadARestar = result.value;
 
-                    Swal.fire({
-                        title: 'Actualizado',
-                        text: 'El artículo fue retirado de tu orden.',
-                        icon: 'success',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
+                    if (cantidadARestar >= producto.cantidad) {
+                        carrito.splice(index, 1);
+                    } else {
+                        carrito[index].cantidad -= cantidadARestar;
+                    }
+                    actualizarCarritoYRender();
+                } else if (result.isDenied) {
+                    carrito.splice(index, 1);
+                    actualizarCarritoYRender();
                 }
+            });
+        }
+
+        function actualizarCarritoYRender() {
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            mostrarProductosDelCarrito();
+            Swal.fire({
+                title: 'Actualizado',
+                text: 'Tu orden ha sido modificada.',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
             });
         }
 
         function mostrarProductosDelCarrito() {
             if (carrito.length === 0) {
                 carritoContainer.innerHTML = `
-                    <div class="empty-cart-state">
-                        <i class="fas fa-shopping-bag"></i>
-                        <p>Tu bolsa de compras está vacía de momento.</p>
-                        <a href="{{ route('cart') }}" class="btn-checkout-secondary" style="display:inline-flex; width:auto;">
-                            <i class="fas fa-arrow-left"></i> Volver al Catálogo
-                        </a>
-                    </div>`;
+                <div class="empty-cart-state" style="text-align: center; padding: 40px 20px;">
+                    <i class="fas fa-shopping-bag" style="font-size: 48px; color: #4f46e5; margin-bottom: 15px;"></i>
+                    <p>Tu bolsa de compras está vacía de momento.</p>
+                    <a href="{{ route('cart') }}" class="btn-checkout-secondary" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; width:auto; margin-top:15px; padding: 10px 20px; text-decoration: none; color: #94a3b8; background-color: #1e293b; border: 1px solid #334155; border-radius: 8px;">
+                        <svg viewBox="0 0 576 512" style="width: 16px; height: 16px; fill: currentColor;"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 448a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+                        Volver al Catálogo
+                    </a>
+                </div>`;
             } else {
-                var carritoHTML = '<ul class="checkout-item-list">';
+                var carritoHTML = `
+                <div class="checkout-scroll-area" style="max-height: 280px; overflow-y: auto; padding-right: 8px; margin-bottom: 20px;">
+                    <ul class="checkout-item-list" style="list-style: none; padding: 0; margin: 0;">`;
 
                 carrito.forEach(function(producto, index) {
+                    var imagenSrc = producto.imagen ? producto.imagen : '/img/default-shirt.png';
+
                     carritoHTML += `
-                        <li class="checkout-item">
+                    <li class="checkout-item" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 10px; background: #1e293b; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <img src="${imagenSrc}" alt="Prenda IA" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 1px solid #334155;">
                             <div class="checkout-item-details">
-                                <h4>${producto.nombre}</h4>
-                                <p>Cantidad: ${producto.cantidad}</p>
-                                <button class="btn-delete-item" onclick="eliminarProducto(${index})">
-                                    <i class="fas fa-trash-can"></i> Quitar artículo
+                                <h4 style="margin: 0 0 5px 0; font-size: 15px; color: #ffffff;">${producto.nombre}</h4>
+                                <p style="margin: 0 0 5px 0; font-size: 13px; color: #94a3b8;">Cantidad: ${producto.cantidad}</p>
+                                <button class="btn-delete-item" onclick="eliminarProducto(${index})" style="background: none; border: none; color: #ef4444; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0;">
+                                    <i class="fas fa-minus-circle"></i> Ajustar cantidad
                                 </button>
                             </div>
-                            <div class="checkout-item-price">
-                                $${(producto.precio * producto.cantidad).toFixed(2)}
-                            </div>
-                        </li>`;
+                        </div>
+                        <div class="checkout-item-price" style="font-weight: 700; color: #38bdf8; font-size: 16px;">
+                            $${(producto.precio * producto.cantidad).toFixed(2)}
+                        </div>
+                    </li>`;
                 });
 
                 var totalVenta = carrito.reduce(function(total, producto) {
@@ -271,158 +357,122 @@
                 }, 0);
 
                 carritoHTML += `
-                    </ul>
-                    <div class="checkout-total-block">
-                        <h3>Total de tu Orden (USD)</h3>
-                        <div class="total-price">$${totalVenta.toFixed(2)}</div>
-                    </div>
+                </ul>
+            </div>
+            <div class="checkout-total-block" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #334155;">
+                <h3>Total de tu Orden (USD)</h3>
+                <div class="total-price">$${totalVenta.toFixed(2)}</div>
+            </div>
 
-                    <div class="checkout-actions">
-                        <a href="{{ route('cart') }}" class="btn-checkout-secondary">
-                            <i class="fas fa-arrow-left"></i> Seguir Comprando
-                        </a>
+            <div class="checkout-actions" style="display: flex; gap: 12px; margin-top: 25px; align-items: center; width: 100%;">
+                <a href="{{ route('cart') }}" class="btn-checkout-secondary" style="flex: 1; height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 13px; margin: 0; text-align: center; border-radius: 8px; box-sizing: border-box; background-color: #1e293b; border: 1px solid #334155; text-decoration: none; color: #94a3b8;">
+                    <svg viewBox="0 0 576 512" style="width: 16px; height: 16px; fill: currentColor;"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 448a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+                    Seguir Comprando
+                </a>
 
-                        <form method="GET" action="{{ route('processPaypal') }}" class="d-inline flex-grow-1" id="paypal-form" style="display:flex !important; flex:1;">
-                            <input type="hidden" name="usuario" value="{{ auth()->user()->id }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" id="carrito-input" name="carrito">
-                            <input type="hidden" name="totalVenta" id="total-venta-input" value="${totalVenta.toFixed(2)}">
-                            <button type="submit" id="finalizar-compra-button" class="btn-checkout-primary">
-                                <i class="fab fa-paypal"></i> Proceder al Pago
-                            </button>
-                        </form>
-                    </div>`;
+                <button type="button" onclick="vaciarCarritoCompleto()" class="btn-checkout-secondary" style="flex: 1; height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 13px; margin: 0; text-align: center; border-radius: 8px; background-color: #ef4444 !important; color: white !important; border: none !important; box-sizing: border-box; cursor: pointer;">
+                    <svg viewBox="0 0 448 512" style="width: 15px; height: 15px; fill: currentColor;"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
+                    Vaciar Carrito
+                </button>
+
+                <form method="GET" action="{{ route('processPaypal') }}" id="paypal-form" style="flex: 1.2; display: flex; margin: 0; padding: 0;">
+                    <input type="hidden" name="usuario" value="{{ auth()->user()->id }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" id="carrito-input" name="carrito">
+                    <input type="hidden" name="totalVenta" id="total-venta-input" value="${totalVenta.toFixed(2)}">
+
+                    <button type="submit" id="finalizar-compra-button" class="btn-checkout-primary" style="width: 100%; height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 13px; border-radius: 8px; margin: 0; padding: 0; box-shadow: none; cursor: pointer;">
+                        <svg viewBox="0 0 576 512" style="width: 16px; height: 16px; fill: currentColor;"><path d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm16 64H496c8.8 0 16 7.2 16 16v16H48V144c0-8.8 7.2-16 16-16zM48 240H528V368c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V240zM288 320a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zm72 0a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+                        Pagar con PayPal
+                    </button>
+                </form>
+            </div>`;
 
                 carritoContainer.innerHTML = carritoHTML;
 
-                // Sincronizar de forma segura el valor del input oculto para PayPal en tiempo real
                 var carritoInput = document.getElementById('carrito-input');
-                if(carritoInput) {
+                if (carritoInput) {
                     carritoInput.value = JSON.stringify(carrito);
                 }
             }
         }
 
+        function vaciarCarritoCompleto() {
+            Swal.fire({
+                title: '¿Vaciar toda tu orden?',
+                text: 'Esto removerá absolutamente todos los diseños de tu bolsa.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, vaciar todo',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    carrito = [];
+                    localStorage.setItem('carrito', JSON.stringify(carrito));
+                    mostrarProductosDelCarrito();
+                    Swal.fire('Bolsa Vacía', 'Se han removido todos los artículos.', 'success');
+                }
+            });
+        }
+
+        // INTERCEPTAR ENVÍO FORMULARIO PARA DESCARGAR IMAGEN LOCAL
+        document.addEventListener('submit', function(e) {
+            if (e.target && e.target.id === 'paypal-form') {
+                if (carrito.length === 0) return;
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Procesando diseño...',
+                    text: 'Guardando el archivo plano PNG en el servidor local para la estampadora.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                var primerProducto = carrito[0]; // Corregido el índice del array
+
+                fetch("{{ route('guardar.estampado.local') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            url_imagen: primerProducto.imagen
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            carrito[0].imagen = data.url_local; // Corregido el índice del array
+                            localStorage.setItem('carrito', JSON.stringify(carrito));
+                            document.getElementById('carrito-input').value = JSON.stringify(carrito);
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Diseño Asegurado!',
+                                text: 'Imagen descargada localmente en public/storage/estampados/',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                e.target.submit();
+                            });
+                        } else {
+                            Swal.fire('Error', 'No se pudo almacenar la imagen localmente.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        Swal.fire('Error', 'Ocurrió un problema en el servidor.', 'error');
+                    });
+            }
+        });
+
         // Renderizado inicial
         mostrarProductosDelCarrito();
     </script>
 @endsection
-
-{{-- @extends('layouts.app')
-
-@section('content')
-<link rel="stylesheet" href="{{ asset('css/checkout.css') }}"> <!-- Enlace al archivo CSS externo -->
-
-    <div class="container">
-        <h1 class="text-center">Checkout de Compra</h1>
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h2 class="text-center">Resumen del Carrito</h2>
-                <ul id="carrito-container" class="list-group">
-                    <!-- Aquí se mostrarán los productos del carrito -->
-                </ul>
-            </div>
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-md-8 text-center">
-                        <p class="text-center">
-                            <a href="{{ route('cart') }}" class="btn btn-primary">Ir al Carrito</a>
-                        </p>
-
-                        <button onclick="finalizarCompra()" class="btn btn-primary">Finalizar Compra</button>
-                    </div>
-                </div>
-            </div>
-
-
-    <script>
-        // Cargar el carrito del LocalStorage
-        var carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-
-        // Obtener el elemento donde se mostrarán los productos del carrito
-        var carritoContainer = document.getElementById('carrito-container');
-
-        // Función para mostrar los productos del carrito
-        function mostrarProductosDelCarrito() {
-            if (carrito.length === 0) {
-                carritoContainer.innerHTML = '<p>El carrito está vacío</p>';
-            } else {
-                carritoContainer.innerHTML = ''; // Limpiar contenido previo
-
-                carrito.forEach(function(producto, index) {
-                    var listItem = document.createElement('li');
-                    listItem.className = 'list-group-item d-flex justify-content-between align-items-center lh-sm';
-
-                    var nombreProducto = document.createElement('div');
-                    nombreProducto.innerHTML = '<h4 class="my-0">' + producto.nombre +
-                        '</h4><small class="text-body-secondary"><h5 class="my-0">Cantidad: ' + producto.cantidad +
-                        '</h5></small>';
-
-                    var precioProducto = document.createElement('span');
-                    precioProducto.className = 'text-body-secondary';
-                    precioProducto.innerHTML = '<h5 class="my-0">$' + (producto.precio * producto.cantidad).toFixed(2) +
-                        '</h5>';
-
-                    var eliminarButton = document.createElement('button');
-                    eliminarButton.className = 'eliminar-button';
-                    eliminarButton.innerHTML = 'Eliminar de la lista';
-                    eliminarButton.onclick = function() {
-                        eliminarProducto(index);
-                    };
-
-                    listItem.appendChild(nombreProducto);
-                    listItem.appendChild(precioProducto);
-                    listItem.appendChild(eliminarButton);
-
-                    carritoContainer.appendChild(listItem);
-                });
-
-                var totalVenta = carrito.reduce(function(total, producto) {
-                    return total + producto.precio * producto.cantidad;
-                }, 0);
-
-                var totalVentaRedondeado = totalVenta.toFixed(2);
-
-                var totalItem = document.createElement('li');
-                totalItem.className = 'list-group-item d-flex justify-content-between';
-                totalItem.innerHTML = '<span><h4 class="my-0">Total (USD)</h4></span><strong><h4 class="my-0">$' +
-                    totalVentaRedondeado + '</h4></strong>';
-
-                carritoContainer.appendChild(totalItem);
-            }
-        }
-
-        function eliminarProducto(index) {
-            carrito.splice(index, 1);
-            localStorage.setItem('carrito', JSON.stringify(carrito));
-            mostrarProductosDelCarrito();
-        }
-
-        // Función para finalizar la compra y pagar con PayPal
-        function finalizarCompra() {
-            // Construir la URL de PayPal con los parámetros necesarios
-            var usuarioId = "{{ auth()->user()->id }}";
-            var token = "{{ csrf_token() }}";
-            var carritoJson = JSON.stringify(carrito);
-            var total = calcularTotal().toFixed(2);;
-
-            // Limpiar el carrito en el LocalStorage
-            localStorage.removeItem('carrito');
-
-            // Redirigir a PayPal
-            window.location.href = "{{ route('confirmar') }}";
-        }
-
-        // Cargar y mostrar productos del carrito al cargar la página
-        mostrarProductosDelCarrito();
-
-        // Función para calcular el total del carrito
-        function calcularTotal() {
-            var totalVenta = carrito.reduce(function(total, producto) {
-                return total + producto.precio * producto.cantidad;
-            }, 0);
-
-            return totalVenta;
-        }
-    </script>
-@endsection --}}

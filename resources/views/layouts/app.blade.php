@@ -10,6 +10,9 @@
 
     <title>StyleMe - E-commerce Inteligente</title>
 
+    {{-- Icono de la pestaña (Favicon) --}}
+    <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" type="image/x-icon">
+
     <!-- Fonts & Icons Actualizados -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://bunny.net" rel="stylesheet">
@@ -20,7 +23,8 @@
 
     <style>
         /* BLINDAJE MAESTRO - Fuerza el fondo oscuro instantáneo y elimina degradados residuales */
-        html, body {
+        html,
+        body {
             background-color: #0b0f19 !important;
             background-image: none !important;
             color: #ffffff !important;
@@ -52,7 +56,8 @@
             font-size: 22px !important;
             font-weight: 800 !important;
             letter-spacing: 1px;
-            color: #4f46e5 !important; /* Morado tecnológico */
+            color: #4f46e5 !important;
+            /* Morado tecnológico */
             text-decoration: none;
         }
 
@@ -78,7 +83,7 @@
             background-color: #1e293b !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 8px !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
             margin-top: 10px !important;
         }
 
@@ -98,7 +103,8 @@
         .main-content-wrapper {
             background-color: #0b0f19 !important;
             background-image: none !important;
-            flex: 1; /* Empuja el fondo oscuro hasta el borde inferior absoluto de la pantalla */
+            flex: 1;
+            /* Empuja el fondo oscuro hasta el borde inferior absoluto de la pantalla */
             display: flex;
             flex-direction: column;
         }
@@ -108,8 +114,54 @@
             border-color: rgba(255, 255, 255, 0.1) !important;
             padding: 4px 8px;
         }
+
         .custom-toggler .navbar-toggler-icon {
             filter: invert(1);
+        }
+
+        /* 1. Ancho de la barra de desplazamiento global */
+        ::-webkit-scrollbar {
+            width: 10px;
+            /* Un poco más ancha que la interna para que sea fácil de arrastrar */
+        }
+
+        /* 2. El fondo del canal por donde se desliza */
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+            /* Un azul muy oscuro (casi negro) que combine con tu fondo */
+        }
+
+        /* 3. El indicador o tirador que arrastras con el mouse */
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            /* Un gris oscuro discreto */
+            border-radius: 5px;
+            border: 2px solid #0f172a;
+            /* Espaciado transparente artificial */
+        }
+
+        /* 4. Color al pasar el mouse por encima */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+            /* Cambia a tu morado característico cuando pasas el mouse */
+        }
+
+        /* Ocultar las flechas por defecto en Chrome, Edge, Safari y Brave */
+        /* #cantidad_prendas::-webkit-outer-spin-button,
+        #cantidad_prendas::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        } */
+
+        /* Ocultar las flechas en Firefox */
+        /* #cantidad_prendas {
+            -moz-appearance: textfield;
+        } */
+
+        /* Darle un efecto de iluminación suave cuando el usuario hace clic para escribir */
+        #cantidad_prendas:focus {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
         }
     </style>
 </head>
@@ -151,12 +203,14 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link custom-nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link custom-nav-link dropdown-toggle" href="#"
+                                    role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                    v-pre>
                                     <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu" aria-labelledby="navbarDropdown">
+                                <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu"
+                                    aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item custom-dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión

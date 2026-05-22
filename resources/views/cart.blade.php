@@ -394,27 +394,34 @@
                 <!-- CONTROLES -->
                 <div class="viewport-overlay-controls">
 
+                    <!-- Bloque Izquierdo: Precio Estimado (Se mantiene igual) -->
                     <div>
-                        <div
-                            style="
-                        font-size: 11px;
-                        color: #94a3b8;
-                        font-weight: 700;
-                        text-transform: uppercase;
-                    ">
+                        <div style="font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">
                             Precio Estimado
                         </div>
-
                         <div class="price-display">
                             $35.00
                         </div>
                     </div>
 
-                    <button class="btn-studio-checkout" onclick="agregarDisenoAlCarrito()">
+                    <!-- Bloque Derecho Nuevo: Contenedor flexible que junta la Cantidad y tu Botón -->
+                    <div style="display: flex; align-items: center; gap: 12px;">
 
-                        <i class="fas fa-cart-plus"></i>
-                        Añadir al Carrito
-                    </button>
+                        <!-- Input para seleccionar la cantidad de camisetas -->
+                        <div class="quantity-control-studio" style="display: flex; align-items: center; gap: 6px;">
+                            <label
+                                style="font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin: 0;">Cant:</label>
+                            <input type="number" id="cantidad_prendas" value="1" min="1" max="99"
+                                style="width: 55px; height: 42px; background-color: #1e293b; border: 1px solid #334155; color: white; padding: 6px; border-radius: 8px; text-align: center; font-weight: 700; outline: none;">
+                        </div>
+
+                        <!-- Tu botón original de Añadir al Carrito -->
+                        <button class="btn-studio-checkout" onclick="agregarDisenoAlCarrito()" style="margin: 0;">
+                            <i class="fas fa-cart-plus"></i>
+                            Añadir al Carrito
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -550,55 +557,61 @@ ultra realistic fashion photography
         }
 
         function agregarDisenoAlCarrito() {
+            var prompt = document.getElementById('prompt').value;
+            var tipoPrenda = document.getElementById('tipo_camisa').value;
+            var talla = document.getElementById('talla').value;
+            var generatedImage = document.getElementById('generatedImage');
 
-            var prompt =
-                document.getElementById('prompt').value;
+            // CAPTURAR LA CANTIDAD SELECCIONADA
+            var cantidadInput = document.getElementById('cantidad_prendas');
+            var cantidadSeleccionada = cantidadInput ? parseInt(cantidadInput.value) : 1;
 
-            var tipoPrenda =
-                document.getElementById('tipo_camisa').value;
+            // Validación básica por si ponen números negativos o vacíos
+            if (isNaN(cantidadSeleccionada) || cantidadSeleccionada < 1) {
+                cantidadSeleccionada = 1;
+            }
 
-            var talla =
-                document.getElementById('talla').value;
-
-            if (!prompt.trim()) {
-
+            if (!prompt.trim() || generatedImage.style.display === 'none' || !generatedImage.src) {
                 Swal.fire(
                     'Diseño IA',
-                    'Debes generar un diseño primero.',
+                    'Debes escribir un prompt y presionar "Generar Diseño" antes de añadir al carrito.',
                     'warning'
                 );
-
                 return;
             }
 
             var itemDiseno = {
-
                 id: Date.now(),
-
-                nombre: "Diseño IA (" +
-                    tipoPrenda +
-                    " - " +
-                    talla +
-                    ")",
-
+                nombre: "Diseño IA (" + tipoPrenda + " - " + talla + ")",
                 precio: 35.00,
-
-                cantidad: 1
+                cantidad: cantidadSeleccionada, // <--- AHORA USA EL NÚMERO DEL INPUT
+                imagen: generatedImage.src
             };
 
-            productosSeleccionados.push(itemDiseno);
-
-            localStorage.setItem(
-                'carrito',
-                JSON.stringify(productosSeleccionados)
+            // Buscar si el producto idéntico ya estaba en el carrito
+            var productoExistente = productosSeleccionados.find(item =>
+                item.nombre === itemDiseno.nombre && item.imagen === itemDiseno.imagen
             );
 
+            if (productoExistente) {
+                // En lugar de sumar 1, sumamos la cantidad que eligió el usuario
+                productoExistente.cantidad += cantidadSeleccionada;
+            } else {
+                productosSeleccionados.push(itemDiseno);
+            }
+
+            localStorage.setItem('carrito', JSON.stringify(productosSeleccionados));
             actualizarCantidadCarrito();
+
+            // Reiniciar el input a 1 tras agregar con éxito
+            if (cantidadInput) cantidadInput.value = 1;
 
             Swal.fire({
                 icon: 'success',
                 title: '¡Agregado al carrito!',
-                text: 'Tu diseño fue añadido correctamente.'
+                text: `Se añadieron ${cantidadSeleccionada} unidades correctamente.`,
+                timer: 1800,
+                showConfirmButton: false
             });
         }
 

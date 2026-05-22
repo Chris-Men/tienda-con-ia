@@ -15,7 +15,7 @@ return [
     */
 
     'title' => '',
-    'title_prefix' => 'Cafeteria |',
+    'title_prefix' => 'StyleMe |',
     'title_postfix' => '',
 
     /*
@@ -63,9 +63,9 @@ return [
     |
     */
 
-    'logo' => '<b>Cafeteria</b>Admin',
+    'logo' => '<b>StyleMe </b>Admin',
     // 'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img' => 'imagenes/coffee-cup.png',
+    'logo_img' => 'imagenes/mi-logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
